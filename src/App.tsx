@@ -1,11 +1,15 @@
-import './index.css'
-import Login from './components/Login'
+// src/App.tsx
+import { Routes, Route } from "react-router-dom";
+import Login from "./components/Login";
+import ForgotPassword from "./components/ForgotPassword";
 
 function App() {
-
   return (
-    <Login/>
-  )
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/forgot" element={<ForgotPassword />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;

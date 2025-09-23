@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -110,12 +111,12 @@ export default function Login() {
         </form>
 
         <div className="mt-6 text-center">
-          <a
-            href="/forgot"
+          <Link
+            to="/forgot"
             className="text-sm text-blue-600 hover:underline font-medium"
           >
             ¿Olvidaste tu contraseña?
-          </a>
+          </Link>
         </div>
 
         {/* Intentos restantes */}
