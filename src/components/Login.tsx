@@ -1,4 +1,3 @@
-// src/pages/Login.tsx
 import { useState } from "react";
 
 export default function Login() {
@@ -11,6 +10,11 @@ export default function Login() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (attempts <= 0) {
+      setError("Se ha agotado el número de intentos. Por favor, inténtelo de nuevo más tarde.");
+      return;
+    }
 
     if (!email.includes("@")) {
       setError("Correo inválido");
@@ -27,9 +31,9 @@ export default function Login() {
     setTimeout(() => {
       setLoading(false);
       if (email === "admin@docsflow.com" && password === "123456") {
-        alert("Inicio de sesión exitoso ✅");
+        alert("Inicio de sesión exitoso");
       } else {
-        setAttempts((prev) => prev - 1);
+        setAttempts((prev) => Math.max(prev - 1, 0)); // nunca baja de 0
         setError("Credenciales incorrectas");
       }
     }, 1000);
@@ -38,7 +42,6 @@ export default function Login() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 to-slate-50">
       <div className="bg-white shadow-lg rounded-xl w-full max-w-md p-8">
-        {/* Header */}
         <div className="text-center mb-8">
           <img
             src="/assets/logo.jpg"
@@ -49,7 +52,6 @@ export default function Login() {
           <p className="text-slate-500">Gestión de documentos operativos</p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
             <p className="text-red-600 text-sm font-medium">{error}</p>
@@ -68,7 +70,7 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full p-3 border border-slate-300 rounded-md text-sm shadow-sm focus:border-blue-600 focus:ring focus:ring-blue-200"
+              className="w-full p-3 border-3 border-slate-300 rounded-md text-sm shadow-sm focus:border-blue-600 focus:ring focus:ring-blue-200 focus:outline-none"
             />
           </div>
 
@@ -85,24 +87,28 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full p-3 border border-slate-300 rounded-md text-sm shadow-sm focus:border-blue-600 focus:ring focus:ring-blue-200"
+              className="w-full p-3 border-3 border-slate-300 rounded-md text-sm shadow-sm focus:border-blue-400 focus:ring focus:ring-blue-200 focus:outline-none"
             />
           </div>
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-3 text-white font-medium shadow hover:bg-blue-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            disabled={loading || attempts <= 0}
+            className={`w-full flex items-center justify-center gap-2 rounded-md px-4 py-3 font-medium shadow focus:outline-none focus:ring transition
+              ${
+                attempts <= 0
+                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                  : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-400"
+              }`}
           >
             {loading ? (
               <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             ) : (
-              "Iniciar Sesión"
+              attempts <= 0 ? "Bloqueado" : "Iniciar Sesión"
             )}
           </button>
         </form>
 
-        {/* Links */}
         <div className="mt-6 text-center">
           <a
             href="/forgot"
