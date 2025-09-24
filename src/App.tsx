@@ -5,15 +5,17 @@ import ForgotPassword from "./layouts/ForgotPassword";
 import AdminDashboard from "./layouts/AdminDashboard";
 import ResetPassword from "./layouts/ResetPassword";
 import OperatorDashboard from "./layouts/OperatorDashboard";
+import Register from "./layouts/Register";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/forgot" element={<ForgotPassword />} />
       <Route path="/admin" element={<AdminDashboard />} />
       <Route path="/operator" element={<OperatorDashboard />} />
       <Route path="/reset" element={<ResetPassword />} />
+      <Route path="/" element={<Register />} /> 
     </Routes>
   );
 }

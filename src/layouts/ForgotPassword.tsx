@@ -1,5 +1,6 @@
 // src/pages/ForgotPassword.tsx
 import { useState } from "react";
+import logo from "../assets/logo.jpg";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -29,11 +30,11 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 to-slate-50">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-300 to-slate-50">
       <div className="bg-white shadow-lg rounded-xl w-full max-w-md p-8">
         <div className="text-center mb-8">
           <img
-            src="/assets/logo.jpg"
+            src={logo}
             alt="DocsFlow"
             className="w-16 h-16 rounded-md mx-auto mb-4"
           />
@@ -85,7 +86,7 @@ export default function ForgotPassword() {
 
         <div className="mt-6 text-center">
           <a
-            href="/"
+            href="/login"
             className="text-sm text-blue-600 hover:underline font-medium"
           >
             Volver al inicio de sesión

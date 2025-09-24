@@ -1,3 +1,5 @@
+import logo from "../assets/logo.jpg";
+
 type Props = {
   section: string;
   setSection: (s: "dashboard" | "upload" | "documents" | "tables") => void;
@@ -8,7 +10,7 @@ export default function Sidebar({ section, setSection }: Props) {
     <aside className="w-72 bg-white border-r border-slate-200 p-6 fixed h-screen overflow-y-auto">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8 pb-4 border-b">
-        <img src="/assets/logo.jpg" alt="DocsFlow" className="w-10 h-10 rounded" />
+        <img src={logo} alt="DocsFlow" className="w-10 h-10 rounded" />
         <h2 className="text-blue-600 font-semibold text-lg">DocsFlow</h2>
       </div>
 

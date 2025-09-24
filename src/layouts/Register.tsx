@@ -1,18 +1,27 @@
+// src/layouts/Register.tsx
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import RoleSelector from "../components/RoleSelector";
 import logo from "../assets/logo.jpg";
 
-export default function ResetPassword() {
+export default function Register() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState<"operator" | "admin">("operator");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState("");
+
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setNotification("");
+
+    if (!email.includes("@")) {
+      setError("Correo inválido");
+      return;
+    }
 
     if (password.length < 8) {
       setError("La contraseña debe tener al menos 8 caracteres");
@@ -28,10 +37,13 @@ export default function ResetPassword() {
 
     setTimeout(() => {
       setLoading(false);
-      setNotification("✅ Contraseña restablecida con éxito");
-      setPassword("");
-      setConfirmPassword("");
-    }, 1000);
+      // 👉 Aquí en el futuro se hará POST a tu API (FastAPI o backend)
+      if (role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/operator"); // ruta para usuario normal
+      }
+    }, 1200);
   };
 
   return (
@@ -44,8 +56,8 @@ export default function ResetPassword() {
             alt="DocsFlow"
             className="w-44 h-44 mx-auto rounded-md"
           />
-          <h1 className="text-2xl font-bold text-blue-600">Nueva Contraseña</h1>
-          <p className="text-slate-500">Ingresa tu nueva contraseña</p>
+          <h1 className="text-2xl font-bold text-blue-600">Registro</h1>
+          <p className="text-slate-500">Crea tu cuenta en DocsFlow</p>
         </div>
 
         {/* Form */}
@@ -54,10 +66,27 @@ export default function ResetPassword() {
 
           <div>
             <label
+              htmlFor="email"
+              className="block text-sm font-medium text-slate-900"
+            >
+              Correo electrónico
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="mt-1 w-full p-3 border border-slate-300 rounded-md shadow-sm text-sm focus:border-blue-600 focus:ring focus:ring-blue-200 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label
               htmlFor="password"
               className="block text-sm font-medium text-slate-900"
             >
-              Nueva contraseña
+              Contraseña
             </label>
             <input
               id="password"
@@ -85,7 +114,7 @@ export default function ResetPassword() {
               className="mt-1 w-full p-3 border border-slate-300 rounded-md shadow-sm text-sm focus:border-blue-600 focus:ring focus:ring-blue-200 focus:outline-none"
             />
           </div>
-
+          <RoleSelector role={role} setRole={setRole} />
           <button
             type="submit"
             disabled={loading}
@@ -99,27 +128,20 @@ export default function ResetPassword() {
             {loading ? (
               <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             ) : (
-              "Restablecer Contraseña"
+              "Crear cuenta"
             )}
           </button>
         </form>
 
         {/* Links */}
         <div className="mt-6 text-center">
-          <Link
-            to="/"
-            className="text-sm text-blue-600 hover:underline font-medium"
-          >
-            Volver al inicio de sesión
-          </Link>
+          <p className="text-sm text-slate-500">
+            ¿Ya tienes cuenta?{" "}
+            <Link to="/login" className="text-blue-600 hover:underline font-medium">
+              Inicia sesión
+            </Link>
+          </p>
         </div>
-
-        {/* Notification */}
-        {notification && (
-          <div className="mt-4 p-3 bg-green-100 border border-green-400 rounded-md text-center">
-            <p className="text-green-700 font-medium">{notification}</p>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import logo from "../assets/logo.jpg";
 
 type Section = "dashboard" | "users" | "documents" | "tables";
 
@@ -17,9 +18,13 @@ export default function AdminDashboard() {
         ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
         md:translate-x-0`}
       >
-        <div className="p-4 flex items-center gap-2 border-b">
-          <img src="/assets/logo.jpg" alt="DocsFlow" className="w-10 h-10 rounded" />
-          <h2 className="text-xl font-semibold">DocsFlow</h2>
+        <div className="flex items-center gap-3 px-4 py-2 border-b bg-white shadow-sm">
+          <img
+            src={logo}
+            alt="DocsFlow"
+            className="w-12 h-12 rounded-md object-contain"
+          />
+          <h2 className="text-lg font-bold text-blue-600">DocsFlow</h2>
         </div>
 
         <nav className="mt-4">

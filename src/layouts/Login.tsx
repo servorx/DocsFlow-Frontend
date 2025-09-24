@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "../assets/logo.jpg";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -45,11 +46,11 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 to-slate-50">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-300 to-slate-50">
       <div className="bg-white shadow-lg rounded-xl w-full max-w-md p-8">
         <div className="text-center mb-8">
           <img
-            src="/assets/logo.jpg"
+            src={logo}
             alt="DocsFlow"
             className="w-16 h-16 rounded-md mx-auto mb-4"
           />
@@ -113,6 +114,19 @@ export default function Login() {
             )}
           </button>
         </form>
+
+        <div className="mt-4">
+          <button
+            onClick={() => navigate("/")}
+            className="w-full flex items-center justify-center gap-2 rounded-md px-4 py-3 font-medium 
+                      bg-white border border-blue-500 text-blue-600 
+                      hover:bg-blue-50 hover:border-blue-600 hover:text-blue-700
+                      focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 
+                      transition"
+          >
+            Crear cuenta
+          </button>
+        </div>
 
         <div className="mt-6 text-center">
           <Link
