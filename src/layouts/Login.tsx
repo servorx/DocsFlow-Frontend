@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -7,6 +7,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [attempts, setAttempts] = useState(5);
+
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +34,9 @@ export default function Login() {
     setTimeout(() => {
       setLoading(false);
       if (email === "admin@docsflow.com" && password === "123456") {
-        alert("Inicio de sesión exitoso");
+        navigate("/admin");
+      } else if (email === "operador@docsflow.com" && password === "123456") {
+        navigate("/operator");
       } else {
         setAttempts((prev) => Math.max(prev - 1, 0)); // nunca baja de 0
         setError("Credenciales incorrectas");
