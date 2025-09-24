@@ -35,6 +35,8 @@ export default function Login() {
       setLoading(false);
       if (email === "admin@docsflow.com" && password === "123456") {
         navigate("/admin");
+      } else if (email === "operador@docsflow.com" && password === "123456") {
+        navigate("/operator");
       } else {
         setAttempts((prev) => Math.max(prev - 1, 0)); // nunca baja de 0
         setError("Credenciales incorrectas");

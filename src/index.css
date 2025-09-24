@@ -1,2 +1,17 @@
 @import "tailwindcss";
-  
+
+.card {
+  @apply bg-white shadow rounded-lg p-6
+}
+
+.dashboard-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6
+}
+
+.titles {
+  @apply text-blue-600 font-semibold
+}
+
+.links {
+  @apply hover:bg-blue-50
+}
