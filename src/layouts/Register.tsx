@@ -1,22 +1,51 @@
-// src/layouts/Register.tsx
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import RoleSelector from "../components/RoleSelector";
 import logo from "../assets/logo.jpg";
+import { useState, useEffect } from "react";
+import { registerUser } from "../utils/api";
+
+interface Department {
+  id: number;
+  name_department: string;
+}
 
 export default function Register() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<"operator" | "admin">("operator");
+  const [idDepartment, setIdDepartment] = useState<number>(0);
+  const [departments, setDepartments] = useState<Department[]>([]);
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Traer departamentos desde FastAPI
+  useEffect(() => {
+    fetch("http://localhost:8000/departments/departments")
+      .then((res) => {
+        if (!res.ok) throw new Error("Error al cargar departamentos");
+        return res.json();
+      })
+      .then((data) => setDepartments(data))
+      .catch((err) => {
+        console.error(err);
+        setError("No se pudieron cargar los departamentos");
+      });
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    // Validaciones básicas
+    if (!name.trim()) {
+      setError("El nombre es obligatorio");
+      return;
+    }
 
     if (!email.includes("@")) {
       setError("Correo inválido");
@@ -33,17 +62,37 @@ export default function Register() {
       return;
     }
 
+    if (!idDepartment) {
+      setError("Debes seleccionar un departamento");
+      return;
+    }
+
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-      // 👉 Aquí en el futuro se hará POST a tu API (FastAPI o backend)
+    try {
+      const payload = {
+        name,
+        email,
+        password,
+        role,
+        id_department: idDepartment,
+      };
+
+      const response = await registerUser(payload);
+      console.log("Usuario creado:", response);
+
+      // Redirigir según rol
       if (role === "admin") {
         navigate("/admin");
       } else {
-        navigate("/operator"); // ruta para usuario normal
+        navigate("/operator");
       }
-    }, 1200);
+    } catch (err: any) {
+      console.error(err);
+      setError("No se pudo crear la cuenta. Intenta de nuevo.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,11 +113,24 @@ export default function Register() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && <p className="text-red-600 text-sm font-medium">{error}</p>}
 
+          {/* Nombre */}
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-slate-900"
-            >
+            <label htmlFor="name" className="block text-sm font-medium text-slate-900">
+              Nombre
+            </label>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="mt-1 w-full p-3 border border-slate-300 rounded-md shadow-sm text-sm focus:border-blue-600 focus:ring focus:ring-blue-200 focus:outline-none"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-slate-900">
               Correo electrónico
             </label>
             <input
@@ -81,11 +143,9 @@ export default function Register() {
             />
           </div>
 
+          {/* Password */}
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-slate-900"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-slate-900">
               Contraseña
             </label>
             <input
@@ -98,11 +158,9 @@ export default function Register() {
             />
           </div>
 
+          {/* Confirmar Password */}
           <div>
-            <label
-              htmlFor="confirmPassword"
-              className="block text-sm font-medium text-slate-900"
-            >
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-900">
               Confirmar contraseña
             </label>
             <input
@@ -114,7 +172,32 @@ export default function Register() {
               className="mt-1 w-full p-3 border border-slate-300 rounded-md shadow-sm text-sm focus:border-blue-600 focus:ring focus:ring-blue-200 focus:outline-none"
             />
           </div>
+
+          {/* Selector de Rol */}
           <RoleSelector role={role} setRole={setRole} />
+
+          {/* Selector de Departamento */}
+          <div>
+            <label htmlFor="department" className="block text-sm font-medium text-slate-900">
+              Departamento
+            </label>
+            <select
+              id="department"
+              value={idDepartment}
+              onChange={(e) => setIdDepartment(Number(e.target.value))}
+              required
+              className="mt-1 w-full p-3 border border-slate-300 rounded-md shadow-sm text-sm focus:border-blue-600 focus:ring focus:ring-blue-200 focus:outline-none"
+            >
+              <option value="">Selecciona un departamento</option>
+              {departments.map((dep) => (
+                <option key={dep.id} value={dep.id}>
+                  {dep.name_department}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Botón */}
           <button
             type="submit"
             disabled={loading}
