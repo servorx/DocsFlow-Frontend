@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { registerUser } from "../utils/api";
 
 interface Department {
-  id: number;
+  id_department: number;
   name_department: string;
 }
 
@@ -17,20 +17,21 @@ export default function Register() {
   const [role, setRole] = useState<"operator" | "admin">("operator");
   const [idDepartment, setIdDepartment] = useState<number>(0);
   const [departments, setDepartments] = useState<Department[]>([]);
-
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  // Traer departamentos desde FastAPI
   useEffect(() => {
     fetch("http://localhost:8000/departments/departments")
       .then((res) => {
         if (!res.ok) throw new Error("Error al cargar departamentos");
         return res.json();
       })
-      .then((data) => setDepartments(data))
+      .then((data) => {
+        console.log("Departamentos API:", data);
+        setDepartments(data);
+      })
       .catch((err) => {
         console.error(err);
         setError("No se pudieron cargar los departamentos");
@@ -41,31 +42,11 @@ export default function Register() {
     e.preventDefault();
     setError("");
 
-    // Validaciones básicas
-    if (!name.trim()) {
-      setError("El nombre es obligatorio");
-      return;
-    }
-
-    if (!email.includes("@")) {
-      setError("Correo inválido");
-      return;
-    }
-
-    if (password.length < 8) {
-      setError("La contraseña debe tener al menos 8 caracteres");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden");
-      return;
-    }
-
-    if (!idDepartment) {
-      setError("Debes seleccionar un departamento");
-      return;
-    }
+    if (!name.trim()) return setError("El nombre es obligatorio");
+    if (!email.includes("@")) return setError("Correo inválido");
+    if (password.length < 8) return setError("La contraseña debe tener al menos 8 caracteres");
+    if (password !== confirmPassword) return setError("Las contraseñas no coinciden");
+    if (idDepartment === 0) return setError("Debes seleccionar un departamento");
 
     setLoading(true);
 
@@ -77,17 +58,13 @@ export default function Register() {
         role,
         id_department: idDepartment,
       };
+      console.log("Datos enviados a la API:", payload);
 
       const response = await registerUser(payload);
       console.log("Usuario creado:", response);
 
-      // Redirigir según rol
-      if (role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/operator");
-      }
-    } catch (err: any) {
+      navigate(role === "admin" ? "/admin" : "/operator");
+    } catch (err) {
       console.error(err);
       setError("No se pudo crear la cuenta. Intenta de nuevo.");
     } finally {
@@ -100,11 +77,7 @@ export default function Register() {
       <div className="w-full max-w-md p-6 bg-white rounded-xl shadow-lg">
         {/* Header */}
         <div className="text-center mb-8">
-          <img
-            src={logo}
-            alt="DocsFlow"
-            className="w-44 h-44 mx-auto rounded-md"
-          />
+          <img src={logo} alt="DocsFlow" className="w-44 h-44 mx-auto rounded-md" />
           <h1 className="text-2xl font-bold text-blue-600">Registro</h1>
           <p className="text-slate-500">Crea tu cuenta en DocsFlow</p>
         </div>
@@ -188,9 +161,9 @@ export default function Register() {
               required
               className="mt-1 w-full p-3 border border-slate-300 rounded-md shadow-sm text-sm focus:border-blue-600 focus:ring focus:ring-blue-200 focus:outline-none"
             >
-              <option value="">Selecciona un departamento</option>
+              <option value={0}>Selecciona el departamento</option>
               {departments.map((dep) => (
-                <option key={dep.id} value={dep.id}>
+                <option key={dep.id_department} value={dep.id_department}>
                   {dep.name_department}
                 </option>
               ))}
