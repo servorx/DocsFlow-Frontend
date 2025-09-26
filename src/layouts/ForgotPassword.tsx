@@ -8,7 +8,7 @@ export default function ForgotPassword() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -19,16 +19,25 @@ export default function ForgotPassword() {
     }
 
     setLoading(true);
+    try {
+      const res = await fetch("http://localhost:8000/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
-    setTimeout(() => {
+      if (res.ok) {
+        setSuccess("Se han enviado las instrucciones a tu correo electrónico.");
+        setEmail("");
+      } else {
+        setError("No se pudo procesar la solicitud.");
+      }
+    } catch (err) {
+      setError("Error de conexión con el servidor.");
+    } finally {
       setLoading(false);
-      setSuccess(
-        "Se han enviado las instrucciones a tu correo electrónico."
-      );
-      setEmail("");
-    }, 1500);
+    }
   };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-300 to-slate-50">
       <div className="bg-white shadow-lg rounded-xl w-full max-w-md p-8">

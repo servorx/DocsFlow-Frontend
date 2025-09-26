@@ -11,7 +11,7 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -32,17 +32,43 @@ export default function Login() {
 
     setLoading(true);
 
-    setTimeout(() => {
+    try {
+      const response = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
       setLoading(false);
-      if (email === "admin@docsflow.com" && password === "123456") {
+
+      if (!response.ok) {
+        setAttempts((prev) => Math.max(prev - 1, 0));
+        throw new Error("Credenciales incorrectas");
+      }
+
+      const data = await response.json();
+
+      // Guardar en localStorage
+      localStorage.setItem("token", data.access_token);
+      localStorage.setItem("role", data.role);
+      localStorage.setItem("expires_at", (Date.now() + data.expires_in * 1000).toString());
+
+      // Redirigir según rol
+      if (data.role === "admin") {
         navigate("/admin");
-      } else if (email === "operador@docsflow.com" && password === "123456") {
+      } else if (data.role === "operator") {
         navigate("/operator");
       } else {
-        setAttempts((prev) => Math.max(prev - 1, 0)); // nunca baja de 0
-        setError("Credenciales incorrectas");
+        navigate("/login");
       }
-    }, 1000);
+
+    } catch (err: any) {
+      setError(err.message || "Error al iniciar sesión");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

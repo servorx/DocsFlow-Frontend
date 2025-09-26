@@ -86,9 +86,7 @@ export default function AdminDashboard() {
 
             {isUserMenuOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-md p-2">
-                <button className="w-full text-left px-3 py-2 rounded hover:bg-gray-100">
-                  Cerrar Sesión
-                </button>
+                <LogoutButton />
               </div>
             )}
           </div>
@@ -105,6 +103,23 @@ export default function AdminDashboard() {
     </div>
   );
 }
+
+function LogoutButton() {
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // o lo que hayas guardado
+    window.location.href = "/login"; // redirigir al login
+  };
+
+  return (
+    <button
+      onClick={handleLogout}
+      className="w-full text-left px-3 py-2 rounded hover:bg-gray-100 text-red-600"
+    >
+      Cerrar Sesión
+    </button>
+  );
+}
+
 
 /* Dashboard Section */
 function DashboardSection() {
