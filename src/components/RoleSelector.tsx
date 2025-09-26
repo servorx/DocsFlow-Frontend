@@ -1,4 +1,3 @@
-// src/components/RoleSelector.tsx
 type Props = {
   role: "operator" | "admin";
   setRole: (role: "operator" | "admin") => void;

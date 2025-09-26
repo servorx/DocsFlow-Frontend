@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { apiFetch } from "../utils/api";
 
 type Doc = {
   id: number;
@@ -19,23 +20,33 @@ export default function DocumentsTable({ documents: initialDocs }: Props) {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialDocs && initialDocs.length) {
       setDocuments(initialDocs);
+      setLoading(false);
       return;
     }
+    async function fetchDocuments() {
+      try {
+        const data = await apiFetch<Doc[]>("/documents/"); // GET /documents/
+        setDocuments(data);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-    // MOCK: reemplaza esto por llamada real a tu API (documentService.getAll())
-    const sample: Doc[] = [
-      { id: 1, name: "Contrato_Maria_2024.pdf", type: "Contrato", status: "Procesado", date: "2024-09-20", tables: 3 },
-      { id: 2, name: "Factura_Enero_2024.pdf", type: "Factura", status: "Procesando", date: "2024-09-18", tables: 0 },
-      { id: 3, name: "Reporte_Mensual.pdf", type: "Reporte", status: "Procesado", date: "2024-09-12", tables: 7 },
-    ];
-    setDocuments(sample);
+    fetchDocuments();
   }, [initialDocs]);
 
-  const types = useMemo(() => Array.from(new Set(documents.map((d) => d.type))), [documents]);
+  const types = useMemo(
+    () => Array.from(new Set(documents.map((d) => d.type))),
+    [documents]
+  );
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -47,17 +58,38 @@ export default function DocumentsTable({ documents: initialDocs }: Props) {
     });
   }, [documents, search, typeFilter, statusFilter]);
 
-  // acciones (reemplazar por integración real)
-  const handleDelete = (id: number) => {
+  // DELETE real
+  const handleDelete = async (id: number) => {
     if (!confirm("¿Eliminar documento? Esta acción no se puede deshacer.")) return;
-    setDocuments((prev) => prev.filter((d) => d.id !== id));
-    // aquí: llamar a documentService.delete(id)
+
+    try {
+      await apiFetch(`/documents/${id}`, { method: "DELETE" }); // DELETE /documents/:id
+      setDocuments((prev) => prev.filter((d) => d.id !== id));
+    } catch (err) {
+      alert(`Error eliminando documento: ${(err as Error).message}`);
+    }
   };
 
   const handleViewTables = (docId: number) => {
     // en tu app real podrías navegar a /tables?documentId=...
     console.log("Ver tablas documento:", docId);
   };
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-xl shadow p-6 text-center text-slate-500">
+        Cargando documentos...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white rounded-xl shadow p-6 text-center text-red-600">
+        Error al cargar documentos: {error}
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-xl shadow p-6">
