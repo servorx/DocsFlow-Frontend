@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.jpg";
+import { loginUser } from "../utils/api"; 
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -33,27 +34,22 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch("/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      const data = await loginUser({
+        username: email,
+        password,
       });
 
-      setLoading(false);
-
-      if (!response.ok) {
-        setAttempts((prev) => Math.max(prev - 1, 0));
-        throw new Error("Credenciales incorrectas");
-      }
-
-      const data = await response.json();
-
-      // Guardar en localStorage
+      // Guardar token en localStorage
       localStorage.setItem("token", data.access_token);
-      localStorage.setItem("role", data.role);
-      localStorage.setItem("expires_at", (Date.now() + data.expires_in * 1000).toString());
+      if (data.role) {
+        localStorage.setItem("role", data.role);
+      }
+      if (data.expires_in) {
+        localStorage.setItem(
+          "expires_at",
+          (Date.now() + data.expires_in * 1000).toString()
+        );
+      }
 
       // Redirigir según rol
       if (data.role === "admin") {
@@ -61,10 +57,11 @@ export default function Login() {
       } else if (data.role === "operator") {
         navigate("/operator");
       } else {
-        navigate("/login");
+        navigate("/");
       }
 
     } catch (err: any) {
+      setAttempts((prev) => Math.max(prev - 1, 0));
       setError(err.message || "Error al iniciar sesión");
     } finally {
       setLoading(false);
@@ -163,7 +160,6 @@ export default function Login() {
           </Link>
         </div>
 
-        {/* Intentos restantes */}
         {attempts < 5 && (
           <div className="mt-4 p-3 bg-amber-100 border border-amber-400 rounded-md text-center">
             <p className="text-amber-600 font-medium">

@@ -1,5 +1,5 @@
 // Esta es la ruta backend FastAPI
-const API_URL = "http://localhost:8000";
+const API_URL = import.meta.env.VITE_URL_API;
 
 export async function apiFetch<T>(
   endpoint: string,
@@ -29,6 +29,43 @@ export async function apiFetch<T>(
 // Ejemplo de petición de registro
 export async function registerUser(data: any) {
   const res = await fetch(`${API_URL}/auth/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Error ${res.status}: ${res.statusText}`);
+  }
+
+  return res.json();
+}
+
+export async function loginUser(data: { username: string; password: string }) {
+  const params = new URLSearchParams();
+  params.append("username", data.username);
+  params.append("password", data.password);
+
+  const res = await fetch(`${API_URL}/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: params.toString(),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Error ${res.status}: ${res.statusText}`);
+  }
+
+  return res.json();
+}
+
+// esto es para lo del forgot password
+export async function forgotPassword(data: { email: string }) {
+  const res = await fetch(`${API_URL}/auth/forgot-password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
