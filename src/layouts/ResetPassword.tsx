@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import logo from "../assets/logo.jpg";
+import { resetPassword } from "../utils/ResetPasswordApi";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -8,8 +9,11 @@ export default function ResetPassword() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState("");
+  // esto es para el token
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setNotification("");
@@ -24,14 +28,31 @@ export default function ResetPassword() {
       return;
     }
 
+    if (!token) {
+      setError("Token no válido o ausente en el enlace.");
+      return;
+    }
+
+    // // verificar que la contrasenia no sea igual a la contraseña actual
+    // debo de agarrar la contraseña actual del usuario logueado
+
+    // if (password === currentPassword) {
+    //   setError("La contraseña actual no puede ser la misma que la nueva contraseña.");
+    //   return;
+    // }
+
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await resetPassword({ token, password });
       setNotification("✅ Contraseña restablecida con éxito");
       setPassword("");
       setConfirmPassword("");
-    }, 1000);
+    } catch (err: any) {
+      setError(err.message || "Error al restablecer la contraseña");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

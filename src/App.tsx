@@ -33,7 +33,7 @@ function App() {
         }
       />
       
-      <Route path="/reset" element={<ResetPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route path="/" element={<Register />} /> 
     </Routes>
