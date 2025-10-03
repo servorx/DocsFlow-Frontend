@@ -33,14 +33,6 @@ export default function ResetPassword() {
       return;
     }
 
-    // // verificar que la contrasenia no sea igual a la contraseña actual
-    // debo de agarrar la contraseña actual del usuario logueado
-
-    // if (password === currentPassword) {
-    //   setError("La contraseña actual no puede ser la misma que la nueva contraseña.");
-    //   return;
-    // }
-
     setLoading(true);
 
     try {
@@ -128,7 +120,7 @@ export default function ResetPassword() {
         {/* Links */}
         <div className="mt-6 text-center">
           <Link
-            to="/"
+            to="/login"
             className="text-sm text-blue-600 hover:underline font-medium"
           >
             Volver al inicio de sesión

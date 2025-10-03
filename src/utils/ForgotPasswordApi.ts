@@ -2,7 +2,7 @@ const API_URL = import.meta.env.VITE_URL_API;
 
 // esto es para lo del forgot password
 export async function forgotPassword(data: { email: string }) {
-  const res = await fetch(`${API_URL}/auth/forgot-password`, {
+  const res = await fetch(`${API_URL}/forgot-password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
