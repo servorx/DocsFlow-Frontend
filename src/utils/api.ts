@@ -26,23 +26,6 @@ export async function apiFetch<T>(
   return response.json();
 }
 
-// Ejemplo de petición de registro
-export async function registerUser(data: any) {
-  const res = await fetch(`${API_URL}/auth/register`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Error ${res.status}: ${res.statusText}`);
-  }
-
-  return res.json();
-}
-
 export async function loginUser(data: { username: string; password: string }) {
   const params = new URLSearchParams();
   params.append("username", data.username);
@@ -63,19 +46,3 @@ export async function loginUser(data: { username: string; password: string }) {
   return res.json();
 }
 
-// esto es para lo del forgot password
-export async function forgotPassword(data: { email: string }) {
-  const res = await fetch(`${API_URL}/auth/forgot-password`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Error ${res.status}: ${res.statusText}`);
-  }
-
-  return res.json();
-}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import logo from "../assets/logo.jpg";
-import { forgotPassword } from "../utils/api";
+import { forgotPassword } from "../utils/ForgotPasswordApi";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -21,17 +21,10 @@ export default function ForgotPassword() {
     setLoading(true);
     try {
       const res = await forgotPassword({ email });
-
-      if (res.ok) {
-        setSuccess("Se han enviado las instrucciones a tu correo electrónico.");
-        setEmail("");
-      } else {
-        setError("No se pudo procesar la solicitud.");
-      } 
+      setSuccess(res.message || "Se han enviado las instrucciones a tu correo electrónico.");
+      setEmail("");
     } catch (err) {
       setError("Error de conexión con el servidor.");
-    } finally {
-      setLoading(false);
     }
   };
   return (

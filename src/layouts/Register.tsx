@@ -2,8 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import RoleSelector from "../components/RoleSelector";
 import logo from "../assets/logo.jpg";
 import { useState, useEffect } from "react";
-import { registerUser } from "../utils/api";
-
+import { registerUser } from "../utils/RegisterApi";
 interface Department {
   id_department: number;
   name_department: string;
