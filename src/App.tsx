@@ -7,14 +7,18 @@ import ResetPassword from "./layouts/ResetPassword";
 import OperatorDashboard from "./layouts/OperatorDashboard";
 import Register from "./layouts/Register";
 import PrivateRoute from "./utils/PrivateRoute";
+import Unauthorized from "./components/Unauthorized";
 
 function App() {
   return (
     <Routes>
+      {/* Rutas públicas */}
       <Route path="/login" element={<Login />} />
-
       <Route path="/forgot" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/" element={<Register />} />
 
+      {/* Rutas privadas */}
       <Route
         path="/admin"
         element={
@@ -32,10 +36,14 @@ function App() {
           </PrivateRoute>
         }
       />
-      
-      <Route path="/reset-password" element={<ResetPassword />} />
 
-      <Route path="/" element={<Register />} /> 
+      {/* Acceso no autorizado */}
+      <Route
+        path="/unauthorized"
+        element={
+          <Unauthorized />
+        }
+      />
     </Routes>
   );
 }

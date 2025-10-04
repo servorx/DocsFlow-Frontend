@@ -27,7 +27,8 @@ export default function PrivateRoute({
 
   // Si se requiere un rol específico y no coincide
   if (role && userRole !== role) {
-    return <Navigate to="/unauthorized" replace />;
+    // devolver a la página de login
+    return <Navigate to="/login" replace />;
   }
 
   // Si todo está bien, renderiza el contenido protegido

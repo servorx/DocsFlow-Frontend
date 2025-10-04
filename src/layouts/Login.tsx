@@ -34,16 +34,20 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const data = await loginUser({
-        username: email,
-        password,
-      });
+      // limpieza previa del localStorage
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("expires_at");
+      // definir el data 
+      const data = await loginUser({ username: email, password });
 
-      // Guardar token en localStorage
-      localStorage.setItem("token", data.access_token);
-      if (data.role) {
-        localStorage.setItem("role", data.role);
+      if (!data.access_token) {
+        throw new Error("Respuesta del servidor inválida");
       }
+
+      // Guardar token y expiración
+      localStorage.setItem("token", data.access_token);
+      if (data.role) localStorage.setItem("role", data.role);
       if (data.expires_in) {
         localStorage.setItem(
           "expires_at",
@@ -51,15 +55,17 @@ export default function Login() {
         );
       }
 
-      // Redirigir según rol
-      if (data.role === "admin") {
-        navigate("/admin");
-      } else if (data.role === "operator") {
-        navigate("/operator");
-      } else {
-        navigate("/");
+      // Redirigir por rol
+      switch (data.role) {
+        case "admin":
+          navigate("/admin");
+          break;
+        case "operator":
+          navigate("/operator");
+          break;
+        default:
+          navigate("/");
       }
-
     } catch (err: any) {
       setAttempts((prev) => Math.max(prev - 1, 0));
       setError(err.message || "Error al iniciar sesión");
@@ -132,8 +138,10 @@ export default function Login() {
           >
             {loading ? (
               <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : attempts <= 0 ? (
+              "Bloqueado"
             ) : (
-              attempts <= 0 ? "Bloqueado" : "Iniciar Sesión"
+              "Iniciar Sesión"
             )}
           </button>
         </form>
