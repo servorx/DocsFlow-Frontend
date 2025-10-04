@@ -38,12 +38,7 @@ function App() {
       />
 
       {/* Acceso no autorizado */}
-      <Route
-        path="/unauthorized"
-        element={
-          <Unauthorized />
-        }
-      />
+      <Route path="/unauthorized" element={<Unauthorized />}/>
     </Routes>
   );
 }
