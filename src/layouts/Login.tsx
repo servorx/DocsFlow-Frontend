@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.jpg";
+import { loginUser } from "../utils/api"; 
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -25,46 +26,48 @@ export default function Login() {
       return;
     }
 
-    if (password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres");
+    if (password.length < 8) {
+      setError("La contraseña debe tener al menos 8 caracteres");
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await fetch("/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      // limpieza previa del localStorage
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("expires_at");
+      // definir el data 
+      const data = await loginUser({ username: email, password });
 
-      setLoading(false);
-
-      if (!response.ok) {
-        setAttempts((prev) => Math.max(prev - 1, 0));
-        throw new Error("Credenciales incorrectas");
+      if (!data.access_token) {
+        throw new Error("Respuesta del servidor inválida");
       }
 
-      const data = await response.json();
-
-      // Guardar en localStorage
+      // Guardar token y expiración
       localStorage.setItem("token", data.access_token);
-      localStorage.setItem("role", data.role);
-      localStorage.setItem("expires_at", (Date.now() + data.expires_in * 1000).toString());
-
-      // Redirigir según rol
-      if (data.role === "admin") {
-        navigate("/admin");
-      } else if (data.role === "operator") {
-        navigate("/operator");
-      } else {
-        navigate("/login");
+      if (data.role) localStorage.setItem("role", data.role);
+      if (data.expires_in) {
+        localStorage.setItem(
+          "expires_at",
+          (Date.now() + data.expires_in * 1000).toString()
+        );
       }
 
+      // Redirigir por rol
+      switch (data.role) {
+        case "admin":
+          navigate("/admin");
+          break;
+        case "operator":
+          navigate("/operator");
+          break;
+        default:
+          navigate("/");
+      }
     } catch (err: any) {
+      setAttempts((prev) => Math.max(prev - 1, 0));
       setError(err.message || "Error al iniciar sesión");
     } finally {
       setLoading(false);
@@ -135,8 +138,10 @@ export default function Login() {
           >
             {loading ? (
               <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : attempts <= 0 ? (
+              "Bloqueado"
             ) : (
-              attempts <= 0 ? "Bloqueado" : "Iniciar Sesión"
+              "Iniciar Sesión"
             )}
           </button>
         </form>
@@ -163,7 +168,6 @@ export default function Login() {
           </Link>
         </div>
 
-        {/* Intentos restantes */}
         {attempts < 5 && (
           <div className="mt-4 p-3 bg-amber-100 border border-amber-400 rounded-md text-center">
             <p className="text-amber-600 font-medium">

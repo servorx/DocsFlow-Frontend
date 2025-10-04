@@ -1,5 +1,5 @@
 // Esta es la ruta backend FastAPI
-const API_URL = "http://localhost:8000";
+const API_URL = import.meta.env.VITE_URL_API;
 
 export async function apiFetch<T>(
   endpoint: string,
@@ -26,14 +26,17 @@ export async function apiFetch<T>(
   return response.json();
 }
 
-// Ejemplo de petición de registro
-export async function registerUser(data: any) {
-  const res = await fetch(`${API_URL}/auth/register`, {
+export async function loginUser(data: { username: string; password: string }) {
+  const params = new URLSearchParams();
+  params.append("username", data.username);
+  params.append("password", data.password);
+
+  const res = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: JSON.stringify(data),
+    body: params.toString(),
   });
 
   if (!res.ok) {
@@ -42,3 +45,4 @@ export async function registerUser(data: any) {
 
   return res.json();
 }
+
