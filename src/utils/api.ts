@@ -5,7 +5,7 @@ export async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  // auth guardado en login
+  // Obtener el token de autenticación desde el almacenamiento local
   const token = localStorage.getItem("token"); 
 
   const headers = {
