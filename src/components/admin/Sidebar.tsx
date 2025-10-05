@@ -7,7 +7,6 @@ interface SidebarProps {
 
 export default function Sidebar({ activeSection, setActiveSection }: SidebarProps) {
   const sections = [
-    { key: "dashboard", icon: "📊", label: "Panel Principal" },
     { key: "users", icon: "👥", label: "Gestión de Usuarios" },
     { key: "documents", icon: "📄", label: "Gestión de Documentos" },
     { key: "tables", icon: "📋", label: "Tablas Extraídas" },

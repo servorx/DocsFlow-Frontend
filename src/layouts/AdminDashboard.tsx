@@ -2,15 +2,14 @@
 import { useState } from "react";
 import Sidebar from "../components/admin/Sidebar";
 import Header from "../components/admin/Header";
-import DashboardSection from "../components/admin/dashboard/AdminDashboardSection";
 import UsersSection from "../components/admin/users/UserSection";
 import DocumentsSection from "../components/admin/documents/DocumentsSection";
 import TablesSection from "../components/admin/tables/TablesSection";
 
-type Section = "dashboard" | "users" | "documents" | "tables";
+type Section = | "users" | "documents" | "tables";
 
 export default function AdminDashboard() {
-  const [activeSection, setActiveSection] = useState<Section>("dashboard");
+  const [activeSection, setActiveSection] = useState<Section>("users");
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -22,7 +21,6 @@ export default function AdminDashboard() {
         <Header activeSection={activeSection} />
 
         <div className="flex-1 p-6 overflow-y-auto">
-          {activeSection === "dashboard" && <DashboardSection />}
           {activeSection === "users" && <UsersSection />}
           {activeSection === "documents" && <DocumentsSection />}
           {activeSection === "tables" && <TablesSection />}

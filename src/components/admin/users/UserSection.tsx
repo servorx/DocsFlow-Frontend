@@ -8,21 +8,22 @@ export default function UsersSection() {
   const [department, setDepartment] = useState("Todos");
   const [query, setQuery] = useState("");
 
-  useEffect(() => {
-    async function fetchUsers() {
-      try {
-        const data = department === "Todos"
-          ? await getAllUsers()
-          : await getUsersByDepartment(department);
-        setUsers(
-          data.filter((u) =>
-            u.name.toLowerCase().includes(query.toLowerCase())
-          )
-        );
-      } catch (err) {
-        console.error(err);
-      }
+  const fetchUsers = async () => {
+    try {
+      const data = department === "Todos"
+        ? await getAllUsers()
+        : await getUsersByDepartment(department);
+      setUsers(
+        data.filter((u) =>
+          u.name.toLowerCase().includes(query.toLowerCase())
+        )
+      );
+    } catch (err) {
+      console.error(err);
     }
+  };
+
+  useEffect(() => {
     fetchUsers();
   }, [department, query]);
 
@@ -32,7 +33,7 @@ export default function UsersSection() {
         <h3 className="font-semibold">Gestión de Usuarios</h3>
         <UserFilters onSearch={setQuery} onDepartmentFilter={setDepartment} />
       </div>
-      <UserTable users={users} />
+      <UserTable users={users} onReload={fetchUsers} />
     </section>
   );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { apiFetch } from "../utils/api";
+import { apiFetch } from "../../utils/api";
 
 type Doc = {
   id: number;

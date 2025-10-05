@@ -19,4 +19,3 @@ export async function loginUser(data: { username: string; password: string }) {
 
   return res.json();
 }
-

@@ -15,7 +15,7 @@ function App() {
       {/* Rutas públicas */}
       <Route path="/login" element={<Login />} />
       <Route path="/forgot" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/auth/reset-password" element={<ResetPassword />} />
       <Route path="/" element={<Register />} />
 
       {/* Rutas privadas */}

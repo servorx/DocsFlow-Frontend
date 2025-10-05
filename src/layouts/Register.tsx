@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import RoleSelector from "../components/RoleSelector";
+import RoleSelector from "../components/operator/RoleSelector";
 import logo from "../assets/logo.jpg";
 import { useState, useEffect } from "react";
 import { registerUser } from "../services/RegisterApi";

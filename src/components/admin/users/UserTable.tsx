@@ -1,39 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { getAllUsers, deleteUser, deactivateUser } from "../../../services/admin/userService";
-import { type User } from "../../../services/admin/userService";
+import React from "react";
+import type { User } from "../../../services/admin/userService";
+import { deleteUser, deactivateUser } from "../../../services/admin/userService";
 
-const UserTable: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+interface UserTableProps {
+  users: User[];
+  onReload?: () => void;
+}
 
-  const loadUsers = async () => {
-    try {
-      const data = await getAllUsers();
-      setUsers(data);
-    } catch (error) {
-      console.error("Error cargando usuarios:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadUsers();
-  }, []);
+const UserTable: React.FC<UserTableProps> = ({ users, onReload }) => {
 
   const handleDeactivate = async (id: number) => {
     await deactivateUser(id);
-    loadUsers();
+    onReload?.(); // recarga si hay función definida
   };
 
   const handleDelete = async (id: number) => {
     if (confirm("¿Seguro que deseas eliminar este usuario?")) {
       await deleteUser(id);
-      loadUsers();
+      onReload?.();
     }
   };
 
-  if (loading) return <p>Cargando usuarios...</p>;
+  if (!users.length) return <p className="p-4 text-gray-500">No hay usuarios disponibles.</p>;
 
   return (
     <div className="overflow-x-auto">

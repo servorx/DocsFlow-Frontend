@@ -9,25 +9,35 @@ export type User = {
   is_active?: boolean;
 }
 
-export async function getAllUsers(): Promise<User[]> {
-  return apiFetch<User[]>("/users");
+// obtiene el usuario actual, osea, yo mismo
+export async function getMe(): Promise<User> {
+  return apiFetch<User>("/users/me");
 }
 
+// obtiene todos los usuarios
+export async function getAllUsers(): Promise<User[]> {
+  return apiFetch<User[]>("/users/all");
+}
+
+// obtiene un usuario por id
 export async function getUserById(id: number): Promise<User> {
   return apiFetch<User>(`/users/${id}`);
 }
 
-export async function getUsersByDepartment(department: string): Promise<User[]> {
-  return apiFetch<User[]>(`/admin/users?department=${department}`);
+// obtiene todos los usuarios de un departamento
+export async function getUsersByDepartment(departmentId: number): Promise<User[]> {
+  return apiFetch<User[]>(`/users/department/${departmentId}`);
 }
 
+// crea un usuario
 export async function createUser(data: Partial<User>): Promise<User> {
-  return apiFetch<User>("/users", {
+  return apiFetch<User>("/users/create", {
     method: "POST",
     body: JSON.stringify(data),
   });
 }
 
+// actualiza un usuario
 export async function updateUser(id: number, data: Partial<User>): Promise<User> {
   return apiFetch<User>(`/users/${id}`, {
     method: "PUT",
@@ -35,9 +45,7 @@ export async function updateUser(id: number, data: Partial<User>): Promise<User>
   });
 }
 
+// elimina un usuario
 export async function deleteUser(id: number): Promise<void> {
   await apiFetch(`/users/${id}`, { method: "DELETE" });
-}
-export async function deactivateUser(id: number): Promise<void> {
-  await apiFetch(`/users/${id}/deactivate`, { method: "PUT" });
 }

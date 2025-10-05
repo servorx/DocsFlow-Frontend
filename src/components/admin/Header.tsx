@@ -9,7 +9,6 @@ export default function Header({ activeSection }: HeaderProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const titles: Record<string, string> = {
-    dashboard: "Panel de Administración",
     users: "Gestión de Usuarios",
     documents: "Gestión de Documentos",
     tables: "Tablas Extraídas",
