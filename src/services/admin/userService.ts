@@ -4,6 +4,7 @@ export type User = {
   id_user: number;
   name: string;
   email: string;
+  password?: string;
   role?: string;
   id_department?: number;
 }
@@ -32,9 +33,11 @@ export async function getUsersByDepartment(departmentId: number): Promise<User[]
 export async function createUser(data: Partial<User>): Promise<User> {
   return apiFetch<User>("/users/create", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
 }
+
 
 // actualiza un usuario
 export async function updateUser(id: number, data: Partial<User>): Promise<User> {

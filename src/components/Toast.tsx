@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-
+import "../../src/index.css";
 interface ToastProps {
   message: string;
   type?: "success" | "error" | "info";
@@ -14,8 +14,8 @@ export default function Toast({ message, type = "success", onClose }: ToastProps
 
   const colors = {
     success: "bg-green-500",
-    error: "bg-red-500",
-    info: "bg-blue-500",
+    error: "bg-red-300",
+    info: "bg-blue-300",
   };
 
   return (

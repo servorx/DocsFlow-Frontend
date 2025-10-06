@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getAllDepartments, type Department } from "../../../services/admin/departmentService";
 
 interface UserFiltersProps {
   onSearch: (query: string) => void;
@@ -13,6 +14,27 @@ export default function UserFilters({
 }: UserFiltersProps) {
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("Todos");
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Cargar departamentos desde el backend
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        setLoading(true);
+        const data = await getAllDepartments();
+        setDepartments(data);
+      } catch (err) {
+        console.error("Error al cargar departamentos:", err);
+        setError("No se pudieron cargar los departamentos.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -36,17 +58,25 @@ export default function UserFilters({
         className="border rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
 
-      <select
-        value={department}
-        onChange={handleDepartmentChange}
-        className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-      >
-        <option value="Todos">Todos los departamentos</option>
-        <option value="Administración">Administración</option>
-        <option value="Recursos Humanos">Recursos Humanos</option>
-        <option value="Finanzas">Finanzas</option>
-        <option value="Operaciones">Operaciones</option>
-      </select>
+      {/* 🏢 Filtro por departamento */}
+      {loading ? (
+        <p className="text-sm text-gray-500">Cargando...</p>
+      ) : error ? (
+        <p className="text-sm text-red-500">{error}</p>
+      ) : (
+        <select
+          value={department}
+          onChange={handleDepartmentChange}
+          className="border rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          <option value="Todos">Todos los departamentos</option>
+          {departments.map((dep) => (
+            <option key={dep.id_department} value={dep.id_department.toString()}>
+              {dep.name_department}
+            </option>
+          ))}
+        </select>
+      )}
 
       <button
         onClick={onAdd}

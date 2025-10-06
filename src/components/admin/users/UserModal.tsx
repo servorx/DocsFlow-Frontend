@@ -48,7 +48,10 @@ export default function UserModal({ user, onClose, onSave }: UserModalProps) {
             : "Usuario creado correctamente ✅",
           type: "success",
         });
-        setTimeout(() => onClose(), 2000);
+        setTimeout(() => {
+          setToast(null);
+          onClose();
+        }, 2000);
       }
     } catch (error) {
       setToast({ message: "Error al guardar el usuario ❌", type: "error" });
@@ -86,6 +89,21 @@ export default function UserModal({ user, onClose, onSave }: UserModalProps) {
           className="w-full border px-3 py-2 rounded mb-3"
           required
         />
+
+        {/* Contraseña (solo si es nuevo usuario) */}
+        {!user && (
+          <>
+            <label className="block text-sm font-medium mb-1">Contraseña</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password ?? ""}
+              onChange={handleChange}
+              className="w-full border px-3 py-2 rounded mb-3"
+              required
+            />
+          </>
+        )}
 
         {/* Rol */}
         <label className="block text-sm font-medium mb-1">Rol</label>
@@ -138,6 +156,15 @@ export default function UserModal({ user, onClose, onSave }: UserModalProps) {
             Guardar
           </button>
         </div>
+
+        {/* ✅ Toast de confirmación */}
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
       </form>
     </div>
   );
