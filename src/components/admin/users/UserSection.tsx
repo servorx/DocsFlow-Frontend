@@ -38,15 +38,20 @@ export default function UsersSection() {
 
   const handleSave = async (userData: Partial<User>) => {
     try {
-      if (selectedUser) await updateUser(selectedUser.id_user, userData);
-      else await createUser(userData);
+      const res = selectedUser
+        ? await updateUser(selectedUser.id_user, userData)
+        : await createUser(userData);
+
+      console.log("Respuesta del servidor:", res);
+
+      await fetchUsers();
       setShowModal(false);
       setSelectedUser(null);
-      await fetchUsers();
     } catch (err) {
       console.error("Error al guardar usuario:", err);
     }
   };
+
 
   const handleDelete = async () => {
     if (!confirmDelete) return;

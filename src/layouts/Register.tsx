@@ -1,12 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import RoleSelector from "../components/operator/RoleSelector";
 import logo from "../assets/logo.jpg";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { registerUser } from "../services/RegisterApi";
-interface Department {
-  id_department: number;
-  name_department: string;
-}
+import { useDepartments } from "../hooks/useDepartments";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -15,27 +12,11 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<"operator" | "admin">("operator");
   const [idDepartment, setIdDepartment] = useState<number>(0);
-  const [departments, setDepartments] = useState<Department[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const { departments, loading: loadingDepartments, error: departmentError } = useDepartments();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetch("http://localhost:8000/departments/departments")
-      .then((res) => {
-        if (!res.ok) throw new Error("Error al cargar departamentos");
-        return res.json();
-      })
-      .then((data) => {
-        console.log("Departamentos API:", data);
-        setDepartments(data);
-      })
-      .catch((err) => {
-        console.error(err);
-        setError("No se pudieron cargar los departamentos");
-      });
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +39,6 @@ export default function Register() {
         id_department: idDepartment,
       };
       console.log("Datos enviados a la API:", payload);
-
       const response = await registerUser(payload);
       console.log("Usuario creado:", response);
 
@@ -84,6 +64,7 @@ export default function Register() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && <p className="text-red-600 text-sm font-medium">{error}</p>}
+          {departmentError && <p className="text-red-600 text-sm font-medium">{departmentError}</p>}
 
           {/* Nombre */}
           <div>
@@ -158,9 +139,12 @@ export default function Register() {
               value={idDepartment}
               onChange={(e) => setIdDepartment(Number(e.target.value))}
               required
+              disabled={loadingDepartments}
               className="mt-1 w-full p-3 border border-slate-300 rounded-md shadow-sm text-sm focus:border-blue-600 focus:ring focus:ring-blue-200 focus:outline-none"
             >
-              <option value={0}>Selecciona el departamento</option>
+              <option value={0}>
+                {loadingDepartments ? "Cargando departamentos..." : "Selecciona el departamento"}
+              </option>
               {departments.map((dep) => (
                 <option key={dep.id_department} value={dep.id_department}>
                   {dep.name_department}

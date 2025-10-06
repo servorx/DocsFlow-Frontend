@@ -1,22 +1,14 @@
-import React from "react";
 import type { User } from "../../../services/admin/userService";
-import { deleteUser } from "../../../services/admin/userService";
 
 interface UserTableProps {
   users: User[];
-  onReload?: () => void;
+  onEdit: (user: User) => void;
+  onDelete: (user: User) => void;
 }
 
-const UserTable: React.FC<UserTableProps> = ({ users, onReload }) => {
-
-  const handleDelete = async (id: number) => {
-    if (confirm("¿Seguro que deseas eliminar este usuario?")) {
-      await deleteUser(id);
-      onReload?.();
-    }
-  };
-
-  if (!users.length) return <p className="p-4 text-gray-500">No hay usuarios disponibles.</p>;
+export default function UserTable({ users, onEdit, onDelete }: UserTableProps) {
+  if (!users.length)
+    return <p className="p-4 text-gray-500">No hay usuarios disponibles.</p>;
 
   return (
     <div className="overflow-x-auto">
@@ -26,21 +18,25 @@ const UserTable: React.FC<UserTableProps> = ({ users, onReload }) => {
             <th className="px-4 py-2">Nombre</th>
             <th>Email</th>
             <th>Rol</th>
-            <th>Activo</th>
-            <th>Acciones</th>
+            <th className="text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {users.map((u) => (
-            <tr key={u.id_user} className="border-b">
+            <tr key={u.id_user} className="border-b hover:bg-gray-50">
               <td className="px-4 py-2">{u.name}</td>
               <td>{u.email}</td>
               <td>{u.role}</td>
-              <td>{u.is_active ? "✅" : "❌"}</td>
-              <td className="flex gap-2 py-2">
+              <td className="flex justify-center gap-2 py-2">
                 <button
-                  onClick={() => handleDelete(u.id_user)}
-                  className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded"
+                  onClick={() => onEdit(u)}
+                  className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                >
+                  Editar
+                </button>
+                <button
+                  onClick={() => onDelete(u)}
+                  className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200"
                 >
                   Eliminar
                 </button>
@@ -51,6 +47,4 @@ const UserTable: React.FC<UserTableProps> = ({ users, onReload }) => {
       </table>
     </div>
   );
-};
-
-export default UserTable;
+}
