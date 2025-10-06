@@ -5,7 +5,7 @@ export async function apiFetch<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  // auth guardado en login
+  // Obtener el token de autenticación desde el almacenamiento local
   const token = localStorage.getItem("token"); 
 
   const headers = {
@@ -24,25 +24,5 @@ export async function apiFetch<T>(
   }
 
   return response.json();
-}
-
-export async function loginUser(data: { username: string; password: string }) {
-  const params = new URLSearchParams();
-  params.append("username", data.username);
-  params.append("password", data.password);
-
-  const res = await fetch(`${API_URL}/auth/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: params.toString(),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Error ${res.status}: ${res.statusText}`);
-  }
-
-  return res.json();
 }
 

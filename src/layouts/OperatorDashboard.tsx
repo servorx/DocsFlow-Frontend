@@ -1,12 +1,12 @@
 import { useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import StatsCards from "../components/StatsCards";
-import QuickActions from "../components/QuickActions";
-import RecentDocuments from "../components/RecentDocuments";
-import UploadForm from "../components/UploadForm";
-import DocumentsTable from "../components/DocumentsTable";
-import TablesView from "../components/TablesView";
+import Sidebar from "../components/operator/Sidebar";
+import Header from "../components/operator/Header";
+import StatsCards from "../components/operator/StatsCards";
+import QuickActions from "../components/operator/QuickActions";
+import RecentDocuments from "../components/operator/RecentDocuments";
+import UploadForm from "../components/operator/UploadForm";
+import DocumentsTable from "../components/operator/DocumentsTable";
+import TablesView from "../components/operator/TablesView";
   
 export default function OperatorDashboard() {
   const [section, setSection] = useState<"dashboard" | "upload" | "documents" | "tables">("dashboard");

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import logo from "../assets/logo.jpg";
-import { resetPassword } from "../utils/ResetPasswordApi";
+import { resetPassword } from "../services/ResetPasswordApi";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
