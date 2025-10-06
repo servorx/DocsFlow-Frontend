@@ -1,6 +1,6 @@
 import React from "react";
 import type { User } from "../../../services/admin/userService";
-import { deleteUser, deactivateUser } from "../../../services/admin/userService";
+import { deleteUser } from "../../../services/admin/userService";
 
 interface UserTableProps {
   users: User[];
@@ -8,11 +8,6 @@ interface UserTableProps {
 }
 
 const UserTable: React.FC<UserTableProps> = ({ users, onReload }) => {
-
-  const handleDeactivate = async (id: number) => {
-    await deactivateUser(id);
-    onReload?.(); // recarga si hay función definida
-  };
 
   const handleDelete = async (id: number) => {
     if (confirm("¿Seguro que deseas eliminar este usuario?")) {
@@ -43,12 +38,6 @@ const UserTable: React.FC<UserTableProps> = ({ users, onReload }) => {
               <td>{u.role}</td>
               <td>{u.is_active ? "✅" : "❌"}</td>
               <td className="flex gap-2 py-2">
-                <button
-                  onClick={() => handleDeactivate(u.id_user)}
-                  className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded"
-                >
-                  Desactivar
-                </button>
                 <button
                   onClick={() => handleDelete(u.id_user)}
                   className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded"

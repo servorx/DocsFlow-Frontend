@@ -7,6 +7,7 @@ export type User = {
   role?: string;
   created_at?: string;
   is_active?: boolean;
+  id_department?: number;
 }
 
 // obtiene el usuario actual, osea, yo mismo
